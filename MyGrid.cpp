@@ -15,9 +15,7 @@
 MyGrid::MyGrid(size_t rows, size_t cols, const Tile &initialTile) {
     numberOfRows = rows;
     numberOfCols = cols;
-    startTile = initialTile;
-
-    Tile myGrid[numberOfRows][numberOfCols] = initialTile;
+    myGrid[numberOfRows][numberOfCols] = initialTile;
 }
 
 
@@ -34,8 +32,8 @@ MyGrid::MyGrid(MyGrid &&other) noexcept {
     *this = std::move(other);
 }
 
-//    // Destructor
-//    MyGrid::~MyGrid() {}
+//// Destructor
+//MyGrid::~MyGrid() {}
 
 
 // Copy Assignment Operator
@@ -43,7 +41,7 @@ MyGrid::MyGrid(MyGrid &&other) noexcept {
 MyGrid& MyGrid::operator=(const MyGrid &other) {
     this->numberOfRows = other.numberOfRows;
     this->numberOfCols = other.numberOfCols;
-    this->startTile = other.startTile;
+    this->myGrid = other.myGrid;
     return *this;
 }
 
@@ -57,7 +55,26 @@ size_t MyGrid::size() const { return numberOfRows * numberOfCols; }
 
 
 [[nodiscard]] bool MyGrid::validPosition(size_t row, size_t col) const noexcept {
+    return (myGrid[row][col] == Floor);
+}
 
-    return (myGrid[row][col] == Floor)
+Tile& MyGrid::operator()(size_t row, size_t col) {
+    return myGrid[row][col];
+}
 
-};
+const Tile& MyGrid::operator()(size_t row, size_t col) const {
+    return myGrid[row][col];
+}
+
+MyGrid MyGrid::read(std::istream &in) {
+
+    size_t cols;
+    size_t rows;
+    char initialTileChar;
+
+    in >> cols;
+    in >> rows;
+    in >> initialTileChar;
+
+    return MyGrid(cols, rows, tile_from_char(initialTileChar));
+}

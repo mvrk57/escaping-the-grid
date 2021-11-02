@@ -62,7 +62,6 @@ private:
     // TODO Add custom member functions and variables here:
     size_t numberOfRows;
     size_t numberOfCols;
-    Tile startTile;
     // Pointer auf Pointer auf Tiles
     // quasi ein array von Tile-Arrays = 2d Array
     Tile** myGrid;
