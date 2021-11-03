@@ -11,11 +11,27 @@
 
 // Default Constructor
 
-//Constructor
+// Constructor
 MyGrid::MyGrid(size_t rows, size_t cols, const Tile &initialTile) {
     numberOfRows = rows;
     numberOfCols = cols;
-    myGrid[numberOfRows][numberOfCols] = initialTile;
+    myGrid = new Tile*[rows];
+
+    if(cols == 0 && rows == 0) {
+        myGrid[rows] = new Tile[0];
+    }
+
+    for (size_t i = 0; i < rows; ++i) {
+        myGrid[i] = new Tile[cols];
+        // each i-th pointer is now pointing to dynamic array (size cols)
+        // of actual Tile values
+    }
+
+    for (size_t row = 0; row < rows; ++row) {
+        for (size_t col = 0; col < cols; ++col) {
+            myGrid[row][col] = initialTile;
+        }
+    }
 }
 
 
@@ -36,12 +52,28 @@ MyGrid::MyGrid(MyGrid &&other) noexcept {
 //MyGrid::~MyGrid() {}
 
 
+// Move Assignment Operator
+MyGrid& MyGrid::operator=(MyGrid &&other) noexcept {
+
+    if (&other == this)
+        return *this;
+
+    numberOfRows = other.numberOfRows;
+    numberOfCols = other.numberOfCols;
+    myGrid = other.myGrid;
+
+    other.myGrid = nullptr;
+
+    return *this;
+}
+
+
 // Copy Assignment Operator
 // https://en.cppreference.com/w/cpp/language/copy_constructor
 MyGrid& MyGrid::operator=(const MyGrid &other) {
-    this->numberOfRows = other.numberOfRows;
-    this->numberOfCols = other.numberOfCols;
-    this->myGrid = other.myGrid;
+    numberOfRows = other.numberOfRows;
+    numberOfCols = other.numberOfCols;
+    myGrid = other.myGrid;
     return *this;
 }
 
@@ -55,6 +87,8 @@ size_t MyGrid::size() const { return numberOfRows * numberOfCols; }
 
 
 [[nodiscard]] bool MyGrid::validPosition(size_t row, size_t col) const noexcept {
+    // ich glaube ich soll einfach prüfen ob das quasi ne outOfBoundException wirft
+    // mit Hilfe meiner () operatoren
     return (myGrid[row][col] == Floor);
 }
 
@@ -77,4 +111,8 @@ MyGrid MyGrid::read(std::istream &in) {
     in >> initialTileChar;
 
     return MyGrid(cols, rows, tile_from_char(initialTileChar));
+}
+
+std::ostream& operator<<(std::ostream &out, const MyGrid& grid) {
+    return out << grid.myGrid;
 }

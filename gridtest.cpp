@@ -62,7 +62,8 @@ void test_constructor_and_destructor() {
     check_grid(g, 5, 5, Floor);
 
     std::cout << "Testing the copy assignment operator self assignment." << std::endl;
-    g5 = g5;
+//    g5 = g5;
+    g5 = *&g5;
     check_grid(g5, 5, 5, Floor);
 
     std::cout << "Testing the move constructor." << std::endl;
@@ -78,7 +79,8 @@ void test_constructor_and_destructor() {
     check_grid(g6, 0, 0, Floor);
 
     std::cout << "Testing self assignment." << std::endl;
-    g7 = std::move(g7);
+//    g7 = std::move(g7);
+    g7 = std::move(*&g7);
     check_grid(g7, 5, 5, Floor);
 }
 
