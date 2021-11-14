@@ -41,13 +41,13 @@ public:
     // Returns a constant reference to the tile at position row, col of the
     // grid.  Throws an invalid_grid_position exception if the specified
     // grid position is not valid.
-    Tile &operator()(size_t row, size_t col);
+    const Tile &operator()(size_t row, size_t col) const;
 
     // The Element Mutation Function
     // Returns a mutable reference to the tile at position row, col of the
     // grid.  Throws an invalid_grid_position exception if the specified
     // grid position is not valid.
-    const Tile &operator()(size_t row, size_t col) const;
+    Tile &operator()(size_t row, size_t col);
 
     //Create and read in a new MyGrid
     static MyGrid read(std::istream &in);
@@ -65,4 +65,7 @@ private:
     // Pointer auf Pointer auf Tiles
     // quasi ein array von Tile-Arrays = 2d Array
     Tile** myGrid;
+
+//    Tile* myGrid[][];
+//    std::array<>
 };

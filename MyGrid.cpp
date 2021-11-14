@@ -27,6 +27,9 @@ MyGrid::MyGrid(size_t rows, size_t cols, const Tile &initialTile) {
         // of actual Tile values
     }
 
+    // fill is not working with unique_ptr so use loop
+    // std::fill(myGrid[0][0], myGrid[rows][cols], &initialTile);
+
     for (size_t row = 0; row < rows; ++row) {
         for (size_t col = 0; col < cols; ++col) {
             myGrid[row][col] = initialTile;
@@ -62,6 +65,8 @@ MyGrid& MyGrid::operator=(MyGrid &&other) noexcept {
     numberOfCols = other.numberOfCols;
     myGrid = other.myGrid;
 
+    other.numberOfRows = 0;
+    other.numberOfCols = 0;
     other.myGrid = nullptr;
 
     return *this;
@@ -71,9 +76,31 @@ MyGrid& MyGrid::operator=(MyGrid &&other) noexcept {
 // Copy Assignment Operator
 // https://en.cppreference.com/w/cpp/language/copy_constructor
 MyGrid& MyGrid::operator=(const MyGrid &other) {
+
+    if(this == &other) {
+        return *this;
+    }
+
     numberOfRows = other.numberOfRows;
     numberOfCols = other.numberOfCols;
-    myGrid = other.myGrid;
+    myGrid = new Tile*[numberOfRows];
+
+    if(numberOfRows == 0 && numberOfCols == 0) {
+        myGrid[numberOfRows] = new Tile[0];
+    }
+
+    for (size_t i = 0; i < numberOfRows; ++i) {
+        myGrid[i] = new Tile[numberOfCols];
+        // each i-th pointer is now pointing to dynamic array (size cols)
+        // of actual Tile values
+    }
+
+    for(size_t row = 0; row < numberOfRows; row ++) {
+        for(size_t col = 0; col < numberOfCols; col ++) {
+            myGrid[row][col] = other(row, col);
+        }
+    }
+
     return *this;
 }
 
@@ -87,13 +114,14 @@ size_t MyGrid::size() const { return numberOfRows * numberOfCols; }
 
 
 [[nodiscard]] bool MyGrid::validPosition(size_t row, size_t col) const noexcept {
-    // ich glaube ich soll einfach prüfen ob das quasi ne outOfBoundException wirft
-    // mit Hilfe meiner () operatoren
-    return (myGrid[row][col] == Floor);
+    return row < numberOfRows && col < numberOfCols;
 }
 
 Tile& MyGrid::operator()(size_t row, size_t col) {
-    return myGrid[row][col];
+
+    if (validPosition(row, col)) return myGrid[row][col];
+    throw std::out_of_range("index is out of range");
+
 }
 
 const Tile& MyGrid::operator()(size_t row, size_t col) const {
@@ -102,17 +130,33 @@ const Tile& MyGrid::operator()(size_t row, size_t col) const {
 
 MyGrid MyGrid::read(std::istream &in) {
 
-    size_t cols;
-    size_t rows;
-    char initialTileChar;
+    size_t rows, cols;
+    std::string lineTiles;
 
-    in >> cols;
-    in >> rows;
-    in >> initialTileChar;
+    in >> rows >> cols;
 
-    return MyGrid(cols, rows, tile_from_char(initialTileChar));
+    MyGrid myGrid = MyGrid(rows, cols, Wall);
+
+    for(size_t row = 0; row < rows; row ++){
+        in >> lineTiles;
+        for (size_t col = 0; col < cols; col++) {
+            myGrid(row, col) = tile_from_char(lineTiles[col]);
+        }
+
+    }
+
+    return myGrid;
 }
 
 std::ostream& operator<<(std::ostream &out, const MyGrid& grid) {
-    return out << grid.myGrid;
+    out << grid.numberOfRows << "\n" << grid.numberOfCols << "\n";
+
+    for(size_t i = 0; i < grid.numberOfRows; i++) {
+        for(size_t j = 0; j < grid.numberOfCols; j++) {
+            out << char_from_tile(grid.myGrid[i][j]);
+        }
+        out << "\n";
+    }
+
+    return out;
 }
