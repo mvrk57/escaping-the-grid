@@ -3,13 +3,15 @@
 #include <cassert>
 #include <algorithm>
 
-// TODO Define all member functions:
-
-
 // helping links:
 // https://stackoverflow.com/questions/41087485/how-to-divide-class-in-c-into-hpp-and-cpp-files
 
 // Default Constructor
+MyGrid::MyGrid() {
+    numberOfRows = 0;
+    numberOfCols = 0;
+    myGrid = nullptr;
+}
 
 // Constructor
 MyGrid::MyGrid(size_t rows, size_t cols, const Tile &initialTile) {
@@ -26,9 +28,6 @@ MyGrid::MyGrid(size_t rows, size_t cols, const Tile &initialTile) {
         // each i-th pointer is now pointing to dynamic array (size cols)
         // of actual Tile values
     }
-
-    // fill is not working with unique_ptr so use loop
-    // std::fill(myGrid[0][0], myGrid[rows][cols], &initialTile);
 
     for (size_t row = 0; row < rows; ++row) {
         for (size_t col = 0; col < cols; ++col) {

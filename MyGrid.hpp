@@ -8,6 +8,9 @@
 
 class MyGrid {
 public:
+
+    MyGrid();
+
     MyGrid(size_t rows, size_t cols, const Tile &initialTile);
 
     MyGrid(const MyGrid &other);
@@ -59,13 +62,9 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const MyGrid& grid);
 
 private:
-    // TODO Add custom member functions and variables here:
     size_t numberOfRows;
     size_t numberOfCols;
     // Pointer auf Pointer auf Tiles
     // quasi ein array von Tile-Arrays = 2d Array
     Tile** myGrid;
-
-//    Tile* myGrid[][];
-//    std::array<>
 };
